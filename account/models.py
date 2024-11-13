@@ -13,7 +13,7 @@ class Profile(models.Model):
     # 'null=True' allows for nullable relationships, and 'verbose_name' gives a human-readable name in the admin interface.
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, verbose_name='User Object')
 
-    # A biography field to store text data about the user; it allows blank and null values.
+    ''' A biography field to store text data about the user; it allows blank and null values.'''
     bio = models.TextField(blank=True, null=True)
 
     # An image field for the user's profile picture.
