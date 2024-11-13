@@ -42,10 +42,3 @@ class QuizSubmissionAdmin(admin.ModelAdmin):
 class UserRankAdmin(admin.ModelAdmin):
     list_display = ('user', 'rank')
     search_fields = ('user__username',)
-
-# Optional: Register models directly if customization isn’t needed
-admin.site.register(Category)
-admin.site.register(Quiz)
-admin.site.register(Question)
-admin.site.register(QuizSubmission)
-admin.site.register(UserRank)
