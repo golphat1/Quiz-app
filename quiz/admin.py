@@ -44,8 +44,8 @@ class UserRankAdmin(admin.ModelAdmin):
     search_fields = ('user__username',)
 
 # Optional: Register models directly if customization isn’t needed
-# admin.site.register(Category)
-# admin.site.register(Quiz)
-# admin.site.register(Question)
-# admin.site.register(QuizSubmission)
-# admin.site.register(UserRank)
+admin.site.register(Category)
+admin.site.register(Quiz)
+admin.site.register(Question)
+admin.site.register(QuizSubmission)
+admin.site.register(UserRank)
