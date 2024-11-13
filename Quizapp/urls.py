@@ -28,6 +28,8 @@ urlpatterns = [
     path('quiz/', include('quiz.urls')),
     path('leaderboard', views.leaderboard_view, name='leaderboard'),
     path('', views.home, name='home'),
+    #path('user/profile/<username>/', views.profile, name='profile'),
+    path('user/profile/<str:username>/', views.profile, name='profile'),
     # Change 'dashboard_view' to 'leaderboard_view' if that's the intended view
     path('dashboard', views.leaderboard_view, name='dashboard'),
 

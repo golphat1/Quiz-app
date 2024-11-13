@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from django.urls import path
 from django.conf.urls import handler404
 from . import views
@@ -16,9 +18,5 @@ urlpatterns = [
     path('terms_and_conditions', views.terms_conditions_view, name='terms_conditions'),
     path('downloads', views.downloads_view, name='downloads'),
     path('search/users', views.search_users_view, name='search_users'),
-    # Replace 'message_view' with an existing view function, e.g., 'some_other_view'
-    path('message/<int:id>', views.some_other_view, name='message'),
-    path('about/', views.about_view, name='about'),
-    path('blogs/', views.blogs_view, name='blogs'),
-
+  
 ]

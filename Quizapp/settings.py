@@ -1,35 +1,26 @@
 import environ
 import os
+from pathlib import Path
 
+# Initialize environment variables
 env = environ.Env(
-    # set casting, default value
     DEBUG=(bool, False)
 )
 
-from pathlib import Path
+DEBUG = True #
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Take environment variables from .env file
+# Read .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# Security settings
 SECRET_KEY = env('SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
-
-ALLOWED_HOSTS = ["127.0.0.1", "brainbunny.up.railway.app"]
-
-CSRF_TRUSTED_ORIGINS = ["https://brainbunny.up.railway.app"]
-
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1").split(" ")
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,11 +28,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'account',
+    'account',  # Ensure 'account' app is correctly set up
     'base',
     'quiz',
-    'ckeditor',
-    'storages',
+    'django_ckeditor_5',
 ]
 
 MIDDLEWARE = [
@@ -55,12 +45,12 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-ROOT_URLCONF = 'brainbunny.urls'
+ROOT_URLCONF = 'Quizapp.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR,'templates'],
+        'DIRS': [BASE_DIR / 'templates'],  # Adjusted to only templates folder
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,92 +63,57 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'brainbunny.wsgi.application'
-
+WSGI_APPLICATION = 'Quizapp.wsgi.application'
 LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'  # Set redirect URL after login
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
+# Database configuration (PostgreSQL)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ["PGDATABASE"],
-        'USER': os.environ["PGUSER"],
-        'PASSWORD': os.environ["PGPASSWORD"],
-        'HOST': os.environ["PGHOST"],
-        'PORT': os.environ["PGPORT"],
+        'NAME': env("DB_NAME", default="dbtest"),
+        'USER': env("DB_USER", default="your_user"),
+        'PASSWORD': env("DB_PASSWORD", default="your_password"),
+        'HOST': env("DB_HOST", default="localhost"),
+        'PORT': env("DB_PORT", default="5432"),
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+# CKEditor settings
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
+        'heading': {
+            'options': [
+                {'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph'},
+                {'model': 'heading1', 'view': 'h1', 'title': 'Heading 1', 'class': 'ck-heading_heading1'},
+                {'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2'},
+            ]
+        },
+        'height': 300,
+        'width': '100%',
+        'blockToolbar': ['imageUpload'],
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+}
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
-STATIC_URL = 'static/' # url
-STATIC_ROOT = BASE_DIR / 'staticfiles'# production
-
-STATICFILES_DIRS = [
-    BASE_DIR / 'static' # folder location
-]
-
+# Static and media files
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
+# Uncomment if using WhiteNoise for static files instead of AWS
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+# Uncomment if using AWS for storage
+# AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+# AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
 # AWS_S3_REGION_NAME = 'us-east-2' 
 
-AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = None
-# AWS_QUERYSTRING_AUTH = False
+# Uncomment if AWS is set up
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-STATICFILES_STORAGES = 'storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

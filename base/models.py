@@ -1,6 +1,12 @@
+#!/usr/bin/env python3
+
 from django.db import models
-from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
+from django_ckeditor_5.fields import CKEditor5Field
+from ckeditor.fields import RichTextField
+
+   
+
 
 # Profile model to extend the User model with additional fields
 class Profile(models.Model):
@@ -13,10 +19,13 @@ class Profile(models.Model):
         profile_picture (ImageField): Optional profile picture for the user.
         created_at (DateTimeField): Timestamp for when the profile was created.
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    content = CKEditor5Field('Content', config_name='default')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='base_profile')
+    # user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    content = models.TextField(default="Default content here")
 
     def __str__(self):
         """
